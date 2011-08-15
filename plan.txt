@@ -1,0 +1,41 @@
+DailyDose will provide a tumblr blog, updated daily after mkt close at a designated time (4:30 / 5)?
+
+It should look cool
+
+The purpose is to provide a historical, contextual layer to the daily market recap type blog.  Numbers based, and just a few simple numbers that you wont find in too many places, like 200 DMA.
+
+Unsure of legal reprecussions of doing this, should be fine?
+
+For indexes S&P 500, DJI, NASDAQ Composite it should provide:
+- close / volume
+- 200 / 60 / 20 Day Moving Average (DMA)
+- % above / below the above moving averages
+- 200 / 60 / 20 Day Volume Average
+- % above / below the above moving averages
+- Chart summarizing above stats
+- some basic commentary taking into context the year behind.
+
+
+To pull it off:
+- (/) seed csv from yahoo (easy).
+
+- can use rake to execute a "build", which essentially will construct the blog
+
+- (/) procedure which updates the seed csv to latest closing (yahoo-finance)
+module DataUpdater
+
+- procedure which enhances daily values with relevant stats: 
+module AnalysisUpdater
+-- moving averages, volume averages
+-- saves back to original or new csv?
+
+- (/) all data csv based so can always be pulled into a spreadsheet (faster-csv, csv-mapper)
+module CsvIO
+
+- procedure which constructs html from new data calcs (erb / activewhatever that is?)
+module HtmlBuiler
+
+- procedure which posts html to tumblr (rest api should be easy).  should keep track of last uploaded date and only upload if today's upload payload > than last.
+module BlogPoster
+
+
