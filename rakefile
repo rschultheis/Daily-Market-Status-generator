@@ -1,0 +1,28 @@
+DATA_DIR = 'data'
+
+$: << 'lib'
+require 'dd_historical_update'
+
+task :update_historical_data do
+  include DD_Updater
+  update_data_folder
+end
+
+require 'dd_technical_update'
+task :update_technical_data do
+  include DD_Updater
+
+  update_technical_datas
+
+end
+task :update_technical_data => [:update_historical_data]
+
+require 'dd_build_html'
+task :build_blog_html do
+  include DD_HTML_Builder
+
+  generate_daily_dose_html 'data/technical/^GSPC_analysis.csv'
+end
+task :build_blog_html => [:update_technical_data]
+
+task :default => [:build_blog_html]
