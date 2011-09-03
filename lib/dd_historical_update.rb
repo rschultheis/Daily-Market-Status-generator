@@ -37,6 +37,7 @@ module YahooHistoricalData
     Log.debug "Doing get to #{url}"
     resp = Net::HTTP.get_response(URI.parse(url))
     result = JSON.parse(resp.body)
+    Log.debug "Got back '#{result}'"
 
     quote_ohashes = []
     return quote_ohashes unless result['query'] && result['query']['results'] && result['query']['results']['quote']
@@ -95,14 +96,13 @@ module DD_Updater
   def update_data_folder
     glob_str = File.join('data', "*.csv")
     data_files = Dir.glob(glob_str)
-    Log.error "No csv files found in '#{glob_str}'"
+    Log.error "No csv files found in '#{glob_str}'" unless data_files.length > 0
     data_files.each do |data_file|
       symbol = data_file.match(/([A-Z^]+)\.csv$/)[1]
       Log.debug "Updating symbol '#{symbol}' into file '#{data_file}'"
       update_historical_csv symbol, data_file
     end
   end
-
 end
 
 #test code
@@ -114,11 +114,11 @@ if __FILE__ == $0
   TEST_CSV = 'lib/test_data/^GSPC.csv'
 
   class TestDDUpdater < Test::Unit::TestCase
-    def test_updater_historical_single_day
+    def xtest_updater_historical_single_day
       update_historical_csv '^GSPC', TEST_CSV
     end
 
-    def xtest_update_data_folder
+    def test_update_data_folder
       update_data_folder
     end
   end
