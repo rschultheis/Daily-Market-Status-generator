@@ -1,28 +1,26 @@
 DATA_DIR = 'data'
 
 $: << 'lib'
-require 'dd_historical_update'
+require 'dd_jobs'
+include DD_JOBS
 
 task :update_historical_data do
-  include DD_Updater
-  update_data_folder
+  update_historical_data_folder
 end
 
-require 'dd_technical_update'
 task :update_technical_data do
-  include DD_Updater
-
-  update_technical_datas
-
+  update_technical_data_folder
 end
 task :update_technical_data => [:update_historical_data]
 
-require 'dd_build_html'
-task :build_blog_html do
-  include DD_HTML_Builder
-
-  generate_daily_dose_html 'data/technical/^GSPC_analysis.csv'
+task :make_graphics do
+  make_graphics
 end
-task :build_blog_html => [:update_technical_data]
+task :make_graphics => [ :update_technical_data]
+
+task :build_blog_html do
+  update_html_files
+end
+task :build_blog_html => [:update_technical_data, :make_graphics]
 
 task :default => [:build_blog_html]
