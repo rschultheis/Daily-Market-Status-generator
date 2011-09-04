@@ -1,18 +1,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>S&P 500 Daily Dose</title>
+
+  <title>S&P 500 Daily Dose</title>
+
 <meta name="description" content="">
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
 <meta http-equiv="content-style-type" content="text/css">
 <meta http-equiv="expires" content="0">
-<script type="text/javascript">
-<!--
 
-// -->
-</script>
 </head>
 <body>
 	<h2>S&P 500 Daily Dose</h2>
@@ -23,8 +21,7 @@
 		<th>Index</th>
 		<th>Close</th>
 		<th>%up/%down</th>
-		<th>200 DMA</th>
-		<th>%up/%down</th>
+        <th>Volume</th>
 		</tr>
 		
 		<tr>
@@ -32,12 +29,31 @@
 		<td>^GSPC</td>
 		<td><%= @current_day_numbers[:close] %></td>
 		<td><%= @current_day_numbers[:close_pct_diff] %></td>
-		<td><%= @current_day_numbers[:"200_dma"] %></td>
-		<td><%= @current_day_numbers[:"200_dma_pct_diff"] %></td>
+		<td><%= @current_day_numbers[:volume] %></td>
 		</tr>
 
+      <tr></tr>
+
+        <tr>
+        <th>200 DMA</th>
+        <th>60 DMA</th>
+        <th>20 DMA</th>
+		</tr>
+
+        <tr>
+        <td><%= @current_day_numbers[:"200_dma"] %></td>
+        <td><%= @current_day_numbers[:"60_dma"] %></td>
+        <td><%= @current_day_numbers[:"20_dma"] %></td>
+        </tr>
+
+        <tr>
+		<td><%= @current_day_numbers[:"200_dma_pct_diff"] %></td>
+		<td><%= @current_day_numbers[:"60_dma_pct_diff"] %></td>
+		<td><%= @current_day_numbers[:"20_dma_pct_diff"] %></td>
+        </tr>
+
     </table>
-    <img width=800 height=400 src="./imgs/SP.png">
+    <img width=800 height=400 src="./imgs/gspc_20_day_dma_band.png">
 
 
 </body>
