@@ -8,10 +8,9 @@ module DD_GRAPH_GENERATOR
   include CSV_IO
   ROWS_OF_HISTORY_TO_ANALYZE = 20
 
-  INPUT_CSV = "data/technical/^GSPC_analysis.csv"
 
-  def generate_10_day_dma_bands_chart
-    raw_data = csv_read(INPUT_CSV, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE).reverse
+  def generate_10_day_dma_bands_chart input_filename, output_filename
+    raw_data = csv_read(input_filename, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE).reverse
     chart_data = {
         :date => raw_data.map { |day| day[:date].strftime('%Y-%m-%d') },
         :adj_close => raw_data.map { |day| day[:adj_close] },
@@ -47,7 +46,6 @@ module DD_GRAPH_GENERATOR
     chart.maximum_value = 1400
 
 
-    output_filename = "output/line_transparent.png"
     Log.debug "writing chart to '#{output_filename}'"
     chart.write(output_filename)
 
@@ -60,11 +58,13 @@ if __FILE__==$0
 
   include DD_GRAPH_GENERATOR
 
-  TEST_FILE_NAME = 'data/technical/^GSPC_analysis.csv'
+  TEST_INPUT_FILENAME = 'lib/test_data/technical/^GSPC_analysis.csv'
+  TEST_OUTPUT_FILENAME= "lib/test_output/imgs/gspc_20_day_dma_band.png"
+
 
   class TestDD_GRAPG_GENERATOR < Test::Unit::TestCase
     def test_it
-      generate_10_day_dma_bands_chart
+      generate_10_day_dma_bands_chart TEST_INPUT_FILENAME, TEST_OUTPUT_FILENAME
     end
   end
 end

@@ -29,11 +29,9 @@ module DD_Updater
   VMA_BAND = 0.25
 
 
-  def update_technical_analysis_csv filename
-    #Dir.mkdir(File.dirname(filename), 'technical')
-    ta_filename = File.join(File.dirname(filename), 'technical', "#{filename.match(/([A-Z^]+)\.csv$/)[1]}_analysis.csv")
+  def update_technical_analysis_csv input_filename, output_filename
 
-    historical_data = csv_read(filename, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE).reverse
+    historical_data = csv_read(input_filename, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE).reverse
 
     ((PRIMER_ROWS)...historical_data.length).each do |row|
 
@@ -61,23 +59,10 @@ module DD_Updater
       Log.debug "row: #{historical_data[row]}"
     end
 
-    Log.debug "writing analysis to '#{ta_filename}'"
-    csv_write(ta_filename, historical_data.reverse, :converter => CSV_IO::YF_WRITER_CONVERTER )
+    Log.debug "writing analysis to '#{output_filename}'"
+    csv_write(output_filename, historical_data.reverse, :converter => CSV_IO::YF_WRITER_CONVERTER )
 
   end
-
-
-  def update_technical_datas
-    glob_str = File.join('data', "*.csv")
-    data_files = Dir.glob(glob_str)
-    Log.error "No csv files found in '#{glob_str}'"
-    data_files.each do |data_file|
-      symbol = data_file.match(/([A-Z^]+)\.csv$/)[1]
-      Log.debug "Updating symbol '#{symbol}' into file '#{data_file}'"
-      update_technical_analysis_csv data_file
-    end
-  end
-
 end
 
 
@@ -86,12 +71,12 @@ if __FILE__ == $0
 
   include DD_Updater
 
-  TEST_CSV = 'lib/test_data/^GSPC.csv'
+  TEST_INPUT_FILE = 'lib/test_data/^GSPC.csv'
+  TEST_OUTPUT_FILE = 'lib/test_data/technical/^GSPC_analysis.csv'
 
   class TestDDUpdater < Test::Unit::TestCase
     def test_technical_update
-      #update_technical_analysis_csv TEST_CSV
-      update_technical_datas
+      update_technical_analysis_csv TEST_INPUT_FILE, TEST_OUTPUT_FILE
     end
   end
 end

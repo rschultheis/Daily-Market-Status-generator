@@ -105,7 +105,7 @@ if (__FILE__ == $0)
 
   include CSV_IO
   #data/config used by tests
-  READ_TEST_CSV = 'lib/test_data/test_read.csv'
+  READ_TEST_CSV = 'lib/csv_test_files/test_read.csv'
   TEST_CSV_HEADERS = [:date, :open, :high, :low, :close, :volume, :adj_close]
 
   #used to test mapping to appropriate field type
@@ -165,7 +165,7 @@ if (__FILE__ == $0)
     def test_csv_writing
       csv_orig_data = csv_read READ_TEST_CSV, :rows => 400
 
-      test_out_filename = "lib/test_data/test_out.csv"
+      test_out_filename = "lib/csv_test_files/test_out.csv"
       assert_nothing_raised { csv_write test_out_filename, csv_orig_data }
       assert(File.exist?(test_out_filename))
 
@@ -188,7 +188,7 @@ if (__FILE__ == $0)
     def test_csv_formatted_writing
       csv_orig_data = csv_read READ_TEST_CSV, :rows => 400, :converter => TEST_CSV_FIELD_CONVERTER
 
-      test_out_filename = "lib/test_data/test_out.csv"
+      test_out_filename = "lib/csv_test_files/test_out.csv"
       assert_nothing_raised { csv_write test_out_filename, csv_orig_data, :converter => TEST_CSV_WRITER_CONVERTER }
       assert(File.exist?(test_out_filename))
 
