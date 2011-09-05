@@ -1,3 +1,5 @@
+require 'fileutils'
+
 
 $: << 'lib'
 require 'dd_logger'
@@ -21,10 +23,6 @@ module DD_JOBS
   constants.each {|c|
     dir = const_get(c)
     Log.debug "Job Config: #{c.to_s} = '#{dir}'"
-    if (c =~ /_DIR$/) && not(Dir.exist?(dir))
-      Log.warn "directory does not exist, creating it"
-      Dir.mkdir(dir)
-    end
   }
 
   def raw_data_files
@@ -51,6 +49,7 @@ module DD_JOBS
   end
 
   def update_technical_data_folder
+    FileUtils.mkdir_p TECHNICAL_DATA_DIR unless Dir.exist? TECHNICAL_DATA_DIR
     data_files = raw_data_files
 
     data_files.each do |input_file|
@@ -70,6 +69,7 @@ module DD_JOBS
   GRAPH_INPUT_DATA = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
   GRAPH_OUTPUT_FILE = File.join(GRAPH_OUTPUT_DIR, 'gspc_20_day_dma_band.png')
   def make_graphics
+    FileUtils.mkdir_p GRAPH_OUTPUT_DIR unless Dir.exist? GRAPH_OUTPUT_DIR
     generate_10_day_dma_bands_chart GRAPH_INPUT_DATA, GRAPH_OUTPUT_FILE
   end
 
@@ -82,6 +82,7 @@ module DD_JOBS
   BLOG_TEMPLATE_NAME = File.join('lib', 'test_templates', 'example.erb')
 
   def update_html_files
+    FileUtils.mkdir_p OUTPUT_DIR unless Dir.exist? OUTPUT_DIR
     generate_daily_dose_html BLOG_INPUT_DATA, BLOG_TEMPLATE_NAME, OUTPUT_DIR
   end
 end
@@ -90,6 +91,14 @@ include DD_JOBS
 
 
 ## TASKS
+task :setup_seed_data do
+  unless Dir.exist? RAW_DATA_DIR
+    Log.info "Extracting seed data to '#{RAW_DATA_DIR}'"
+
+    system("tar -xzvf data_backup.tar.gz")
+  end
+end
+
 task :update_historical_data do
   update_historical_data_folder
 end
@@ -109,6 +118,6 @@ task :build_blog_html do
 end
 #task :build_blog_html => [:update_technical_data, :make_graphics]
 
-task :build_blog => [:update_historical_data, :update_technical_data, :make_graphics, :build_blog_html]
+task :build_blog => [:setup_seed_data, :update_historical_data, :update_technical_data, :make_graphics, :build_blog_html]
 task :default => [:build_blog]
 

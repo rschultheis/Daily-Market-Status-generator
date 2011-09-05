@@ -1,3 +1,5 @@
 .idea*
 data*
 output*
+data_backup.tar.gz
+doc*
