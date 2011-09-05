@@ -102,6 +102,7 @@ end
 task :update_historical_data do
   update_historical_data_folder
 end
+task :update_historical_data => [:setup_seed_data]
 
 task :update_technical_data do
   update_technical_data_folder
