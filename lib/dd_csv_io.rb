@@ -15,7 +15,7 @@ module CSV_IO
       when /^\d{4}-\d{2}-\d{2}$/
         Date.strptime(unconverted_string, '%Y-%m-%d')
 
-        #this is the way dates come from yahoo.finance.quote yql source, mm/dd/yyyy
+      #this is the way dates come from yahoo.finance.quote yql source, mm/dd/yyyy
       when /^\d{1,2}\/\d{1,2}\/\d{4}$/
         Date.strptime(unconverted_string, '%m/%d/%Y')
 

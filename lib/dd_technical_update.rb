@@ -16,7 +16,7 @@ module DD_Updater
   include CSV_IO
 
   #6 years base data
-  ROWS_OF_HISTORY_TO_ANALYZE = 400
+  ROWS_OF_HISTORY_TO_ANALYZE = 1500
   #1 year to prime
   PRIMER_ROWS = 200
   #leaves 5 years data that will be analyzed

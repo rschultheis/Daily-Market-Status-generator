@@ -9,21 +9,23 @@ module DD_HTML_Builder
   ROWS_OF_HISTORY_TO_ANALYZE = 1
 
   def generate_daily_dose_html input_file, template_filename, output_dir
-    data = csv_read(input_file, :rows => ROWS_OF_HISTORY_TO_ANALYZE)
+    data = csv_read(input_file, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE)
 
     #pull out some stuff for the template:
     @current_day_numbers = data[0]
-    Log.debug @current_day_numbers.keys
+    @current_day_numbers.each_pair do |k,v|
+      Log.debug "current_day_numbers key: '#{k}'\t-> '#{v}'"
+    end
 
     #execute template!
     template_str = IO.read(template_filename)
 
-    Log.debug "pre-executed template:\n#{template_str}"
+    #Log.debug "pre-executed template:\n#{template_str}"
 
     template = ERB.new(template_str)
     blog_html = template.result(binding)
 
-    Log.debug "post-executed template\n#{blog_html}"
+    #Log.debug "post-executed template\n#{blog_html}"
 
 
 

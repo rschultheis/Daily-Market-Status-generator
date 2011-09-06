@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+  <title>S&P 500 Daily Dose</title>
+
+<meta name="description" content="">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8">
+<meta http-equiv="content-style-type" content="text/css">
+<meta http-equiv="expires" content="0">
+
+</head>
+<body bgcolor='#C1C1C1'>
+	<h2 align='center' ><%= "S&P 500 Daily Dose - #{@current_day_numbers[:date].strftime('%A %B %e, %Y') }" %></h2>
+
+    <div id='numbers' align='center'>
+        <table id='main-numbers' cellpadding="10" cellspacing="10" border="2">
+
+          <% @main_numbers = {
+                  "Close" => :close,
+                  "% up/down" => :close_pct_diff,
+                  "Volume" => :"60_vma_pct_diff",
+                  "% off 200 DMA" => :"200_dma_pct_diff",
+          }
+          %>
+
+          <% @main_numbers.each_pair do |name, id| %>
+                    <tr>
+                      <th><%= name %></th
+                      >
+                      <td id='<%= id.to_s %>' ><%= @current_day_numbers[id] %></td>
+                    </tr>
+          <% end %>
+
+
+
+
+        </table>
+    </div>
+
+    <div id='200_dma_band_chart' align='center' border="4">
+        <img width=800 height=400 src="./imgs/gspc_200_day_dma_band.png">
+    </div>
+
+
+
+</body>
+</html>
