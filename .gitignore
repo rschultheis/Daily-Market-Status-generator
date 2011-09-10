@@ -3,3 +3,4 @@ data*
 output*
 data_backup.tar.gz
 doc*
+lib/test_output*
