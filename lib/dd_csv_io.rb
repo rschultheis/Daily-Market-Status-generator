@@ -8,7 +8,10 @@ require 'ohash'
 module CSV_IO
   include CsvMapper
 
-  #YF_READER_CONVERTER= [:date, :float, :float, :float, :float, :integer, :float]
+  #CSV CONVERTER PROCS
+  #These blocks will be used to transform csv string values into the appropriate object types (Dates, numbers)
+  #And from the objects back into strings for writing back to csv
+  #The transformation of data types is handled by the CSV_IO module by default, using the converter option to specify these blocks as seen below
   YF_READER_CONVERTER= lambda do |unconverted_string|
     case unconverted_string
       #date column is YYYY-MM-DD, like '2011-08-09'
@@ -47,8 +50,10 @@ module CSV_IO
     end
   end
 
-
   def csv_read filename, opts={}
+    opts = {
+        :converter => CSV_IO::YF_READER_CONVERTER
+    }.merge(opts)
     Log.debug "reading csv file #{filename} with options #{opts}"
     raise "No such file #{filename}" unless File.exist? filename
 
@@ -75,7 +80,39 @@ module CSV_IO
     end
   end
 
+  #This returns the data in a format that is useful for generating graphs
+  # The return is a hash, each key is a column, each value is an array of all values for that column/key
+  def csv_read_arrays filename, opts={}
+    opts = {
+        :reverse => true
+    }.merge(opts)
+
+    raw_data = csv_read(filename, opts)
+
+    raw_data.reverse! if opts.has_key?(:reverse) && opts[:reverse]
+
+    columns_to_get = opts.has_key?(:columns) ? opts[:columns] : raw_data[0].keys
+
+    hash_of_arrays = Hash.new
+    hash_of_arrays[:length] = raw_data.length
+    columns_to_get.each do |column|
+      hash_of_arrays[column] = raw_data.map do |row|
+        case row[column]
+          when Date
+            row[column].strftime('%Y-%m-%d')
+          else
+            row[column]
+        end
+
+      end
+    end
+    hash_of_arrays
+  end
+
   def csv_write filename, contents, opts={}
+    opts = {
+        :converter => CSV_IO::YF_WRITER_CONVERTER
+    }.merge(opts)
     if File.exist? filename
       Log.warn "Deleting existing '#{filename}'"
       File.delete(filename)
@@ -85,9 +122,16 @@ module CSV_IO
 
     CSV.open(filename, 'w') do |csv|
       #headers
-      csv << contents[0].keys
+      headers = contents[0].keys
+      header_length = headers.length
+      csv << headers
 
       contents.each do |row|
+        #ensure this row's headers match the first rows headers
+        unless ((row.keys[0,header_length] == headers) || (row.keys == headers[0, row.keys.length]))
+          raise "This row's headers do not line up with first row's headers:\nFIRST ROW: #{headers}\nTHIS ROW:  #{row.keys[0,header_length]}"
+        end
+
         if opts.has_key? :converter
           csv << row.values.map{ |value| opts[:converter].call value }
         else

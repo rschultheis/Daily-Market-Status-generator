@@ -31,7 +31,7 @@ module DD_Updater
 
   def update_technical_analysis_csv input_filename, output_filename
 
-    historical_data = csv_read(input_filename, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE).reverse
+    historical_data = csv_read(input_filename, :rows => ROWS_OF_HISTORY_TO_ANALYZE).reverse
 
     ((PRIMER_ROWS)...historical_data.length).each do |row|
 

@@ -91,7 +91,7 @@ module DD_Updater
 
     Log.debug "Checking to see if historical data update is needed for #{symbol}"
     #see what day we have in csv
-    last_updated_date  = csv_read(filename, :rows => 1, :converter => CSV_IO::YF_READER_CONVERTER)[0][:date]
+    last_updated_date  = csv_read(filename, :rows => 1)[0][:date]
     Log.debug "date of top row in csv: #{last_updated_date }"
 
 
@@ -137,9 +137,9 @@ module DD_Updater
 
       Log.debug "writing new csv data"
       #TODO optomize this so it just merges the new csv data into the existing file, insteading of writing it out again completely
-      full_data = csv_read(filename, :converter => CSV_IO::YF_READER_CONVERTER)
+      full_data = csv_read(filename)
       full_data = new_data + full_data
-      csv_write(filename, full_data, :converter => CSV_IO::YF_WRITER_CONVERTER )
+      csv_write(filename, full_data)
       Log.debug "wrote ''#{new_data.length}'' rows of new csv data, for #{full_data.length} total rows of data"
 
       last_updated_date = full_data[0][:date]

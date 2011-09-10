@@ -70,8 +70,9 @@ module DD_JOBS
   GRAPH_OUTPUT_FILE = File.join(GRAPH_OUTPUT_DIR, 'gspc_200_day_dma_band.png')
   def make_graphics
     FileUtils.mkdir_p GRAPH_OUTPUT_DIR unless Dir.exist? GRAPH_OUTPUT_DIR
-    #generate_10_day_dma_bands_chart GRAPH_INPUT_DATA, GRAPH_OUTPUT_FILE
-    generate_200_dma_band_chart GRAPH_INPUT_DATA, GRAPH_OUTPUT_FILE
+
+    generate_dma_band_chart GRAPH_INPUT_DATA, GRAPH_OUTPUT_FILE, :dma_period => 200, :chart_days => 1000
+
   end
 
 
@@ -123,3 +124,24 @@ end
 task :build_blog => [:setup_seed_data, :update_historical_data, :update_technical_data, :make_graphics, :build_blog_html]
 task :default => [:build_blog]
 
+
+## TESTING TASKS
+
+#How do I get a common test task to work, having structured my tests inline in the files like I did?
+require 'rake/testtask'
+
+#this runs all the files, but the test code doesnt run due to __FILE__==$0 test in each file hiding the test code
+Rake::TestTask.new('testx') do |t|
+  t.libs << 'lib'
+  t.test_files = Dir['lib/*.rb']
+  t.verbose = true
+end
+
+#this runs all the tests, but not in a common run, just file by file
+task :test do |t|
+  files = Dir['lib/*.rb']
+
+  files.each do |test_file|
+    Kernel.system("ruby -I lib #{test_file}")
+  end
+end

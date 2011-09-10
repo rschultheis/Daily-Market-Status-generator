@@ -9,7 +9,7 @@ module DD_HTML_Builder
   ROWS_OF_HISTORY_TO_ANALYZE = 1
 
   def generate_daily_dose_html input_file, template_filename, output_dir
-    data = csv_read(input_file, :converter => CSV_IO::YF_READER_CONVERTER, :rows => ROWS_OF_HISTORY_TO_ANALYZE)
+    data = csv_read(input_file, :rows => ROWS_OF_HISTORY_TO_ANALYZE)
 
     #pull out some stuff for the template:
     @current_day_numbers = data[0]
