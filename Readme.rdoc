@@ -16,7 +16,18 @@ For indexes S&P 500, DJI, NASDAQ Composite it provides:
 
 Generally, just run this cmd, and you should get a 'output/example.erb.html' file.
 
-<tt>rake</tt>
+    rake
+
+Individual jobs can be fired off as well:
+
+    rake update_historical_data_folder
+
+    rake update_technical_data_folder
+
+    rake make_graphics
+
+    rake update_html_files
+
 
 == Setup
 

@@ -82,7 +82,7 @@ module CSV_IO
 
   #This returns the data in a format that is useful for generating graphs
   # The return is a hash, each key is a column, each value is an array of all values for that column/key
-  def csv_read_arrays filename, opts={}
+  def get_chart_data filename, opts={}
     opts = {
         :reverse => true
     }.merge(opts)
