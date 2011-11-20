@@ -30,7 +30,6 @@ module CSV_IO
       when /^\d+$/
         unconverted_string.to_i
 
-        #shouldn't happen, but just in case..
       else
         unconverted_string
     end
@@ -52,7 +51,8 @@ module CSV_IO
 
   def csv_read filename, opts={}
     opts = {
-        :converter => CSV_IO::YF_READER_CONVERTER
+        :converter => CSV_IO::YF_READER_CONVERTER,
+        :rows => 10000,
     }.merge(opts)
     Log.debug "reading csv file #{filename} with options #{opts}"
     raise "No such file #{filename}" unless File.exist? filename
@@ -67,8 +67,9 @@ module CSV_IO
           when :rows
             stop_at_row opt_value
 
+          #a converter will turn the raw csv string values into Date, Float, and other objects
           when :converter
-            parser_options :converters => opt_value
+            parser_options(:converters => opt_value) unless opt_value.nil?
 
         end
       end

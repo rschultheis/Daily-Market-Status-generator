@@ -1,0 +1,16 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    csv-mapper (0.5.1)
+      fastercsv
+    fastercsv (1.5.4)
+    json (1.6.1)
+    ohash (0.0.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  csv-mapper
+  json
+  ohash

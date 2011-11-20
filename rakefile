@@ -66,12 +66,14 @@ module DD_JOBS
   require 'dd_graph_generator'
   include DD_GRAPH_GENERATOR
 
-  GRAPH_INPUT_DATA = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
-  GRAPH_OUTPUT_FILE = File.join(GRAPH_OUTPUT_DIR, 'gspc_200_day_dma_band.png')
   def make_graphics
     FileUtils.mkdir_p GRAPH_OUTPUT_DIR unless Dir.exist? GRAPH_OUTPUT_DIR
 
-    generate_dma_band_chart GRAPH_INPUT_DATA, GRAPH_OUTPUT_FILE, :dma_period => 200, :chart_days => 1000
+    input_data_file = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
+    output_image_file = File.join(GRAPH_OUTPUT_DIR, 'gspc_200_day_dma_band.png')
+    generate_dma_band_chart input_data_file, output_image_file, :dma_period => 200, :chart_days => 1000
+
+
 
   end
 
@@ -81,7 +83,7 @@ module DD_JOBS
   require 'dd_build_html'
   include DD_HTML_Builder
   BLOG_INPUT_DATA = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
-  BLOG_TEMPLATE_NAME = File.join(TEMPLATE_DIR, 'clean.erb')
+  BLOG_TEMPLATE_NAME = File.join(TEMPLATE_DIR, 'clean.html.erb')
 
   def update_html_files
     FileUtils.mkdir_p OUTPUT_DIR unless Dir.exist? OUTPUT_DIR

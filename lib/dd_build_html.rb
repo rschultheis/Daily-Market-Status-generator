@@ -29,7 +29,7 @@ module DD_HTML_Builder
 
 
 
-    output_filename = File.join(output_dir, File.basename(template_filename) + '.html')
+    output_filename = File.join(output_dir, File.basename(template_filename).sub(/\.erb$/i, ''))
     Log.debug "writing html to '#{output_filename}'"
     File.open(output_filename, 'w') {|f| f.write(blog_html) }
 
@@ -43,7 +43,7 @@ if __FILE__==$0
   include DD_HTML_Builder
 
   TEST_FILE_NAME = 'lib/test_data/technical/^GSPC_analysis.csv'
-  TEST_TEMPLATE_NAME = File.join('lib', 'test_templates', 'example.erb')
+  TEST_TEMPLATE_NAME = File.join('lib', 'test_templates', 'example.html.erb')
   TEST_OUTPUT_DIR = 'lib/test_output'
 
   class TestDD_HTML_Builder < Test::Unit::TestCase

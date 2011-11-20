@@ -71,7 +71,7 @@ module DD_GRAPH_GENERATOR
     opts = {
       :dma_period => 200,
       :days => 200,
-      :image_size => 800,
+      :image_size => '800x500',
     }.merge(opts)
 
     dma_key           = "#{opts[:dma_period]}_dma".intern
