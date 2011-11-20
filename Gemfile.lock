@@ -4,13 +4,17 @@ GEM
     csv-mapper (0.5.1)
       fastercsv
     fastercsv (1.5.4)
+    gruff (0.3.6)
     json (1.6.1)
     ohash (0.0.3)
+    rmagick (2.13.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   csv-mapper
+  gruff
   json
   ohash
+  rmagick
