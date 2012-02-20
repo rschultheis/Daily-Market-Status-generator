@@ -83,7 +83,7 @@ module DD_JOBS
   require 'dd_build_html'
   include DD_HTML_Builder
   BLOG_INPUT_DATA = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
-  BLOG_TEMPLATE_NAME = File.join(TEMPLATE_DIR, 'clean.html.erb')
+  BLOG_TEMPLATE_NAME = File.join(TEMPLATE_DIR, 'goog_site.html.erb')
 
   def update_html_files
     FileUtils.mkdir_p OUTPUT_DIR unless Dir.exist? OUTPUT_DIR

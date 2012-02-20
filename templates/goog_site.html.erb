@@ -1,7 +1,7 @@
-	<h2 align='center' ><%= "S&P 500 Daily Dose - #{@current_day_numbers[:date].strftime('%A %B %e, %Y') }" %></h2>
+	<h2 align='center' ><%= "S and P 500 Daily Dose - #{@current_day_numbers[:date].strftime('%A %B %e, %Y') }" %></h2>
 
     <div id='numbers' align='center'>
-        <table id='main-numbers' cellpadding="10" cellspacing="10" border="2">
+        <table id='main-numbers' cellpadding='10' cellspacing='10' border='2'>
 
           <% @main_numbers = {
                   "Close" => :close,
@@ -21,10 +21,9 @@
 
 
 
-
         </table>
     </div>
 
     <div id='200_dma_band_chart' align='center' border="4">
-        <img width=800 height=400 src="./imgs/gspc_200_day_dma_band.png">
+        <img width='800' height='400' src='./imgs/gspc_200_day_dma_band.png'></img>
     </div>
