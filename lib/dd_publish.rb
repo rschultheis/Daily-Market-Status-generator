@@ -52,9 +52,25 @@ class GoogleSitesPublisher
     @gapi.post("#{@base_url}/feeds/content/#{@domain}/#{@site}", payload)
   end
   
-  def attach_file(filepath, parent_page)
-    
-  end  
+  def attach_file(title, filepath, parent_page)
+    payload = %Q|
+    <entry xmlns="http://www.w3.org/2005/Atom">
+      <category scheme="http://schemas.google.com/g/2005#kind"
+              term="http://schemas.google.com/sites/2008#attachment" label="attachment"/>
+      <link rel="http://schemas.google.com/sites/2008#parent" type="application/atom+xml"
+            href="https://sites.google.com/feeds/content/#{@domain}/#{@site}/#{parent_page}"/>
+      <title>#{title}</title>
+    </entry>
+    |
+
+    path = "#{@base_url}/feeds/content/#{@domain}/#{@site}"
+    #https://sites.google.com/site/sp500dailydeets/fri-feb-24-2012-snp-500/gspc_200_day_dma_band.png?attredirects=0
+
+    puts "PAYLOAD:\n#{payload}\n"
+    puts "PATH: '#{path}'\n"
+
+    @gapi.make_file_request(:post, path, filepath, 'image/png', payload)
+  end
   
 end
 
@@ -73,7 +89,10 @@ module DD_Publisher
     #will look like: 'Fri Feb 17 2012 SnP 500'
     page_title = Date.today.strftime("%a %b %d, %Y SnP 500")
 
-    PUBLISHER.add_page(page_title, html)
+    page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
+
+    #PUBLISHER.add_page(page_title, html)
+    PUBLISHER.attach_file('chart.png', File.join(directory, 'imgs/gspc_200_day_dma_band.png'), page_title_url)
   end
   
 end
