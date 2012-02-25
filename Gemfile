@@ -15,5 +15,5 @@ gem "rmagick", "2.13.1"
 
 #for publishing to google sites
 gem "gdata", "1.1.2"
-#gem "xml-simple", "1.1.1"
+gem "xml-simple", "1.1.1"
 #gem "libxml-ruby", "2.2.2"

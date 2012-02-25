@@ -9,6 +9,7 @@ GEM
     json (1.6.1)
     ohash (0.0.3)
     rmagick (2.13.1)
+    xml-simple (1.1.1)
 
 PLATFORMS
   ruby
@@ -20,3 +21,4 @@ DEPENDENCIES
   json (= 1.6.1)
   ohash (= 0.0.3)
   rmagick (= 2.13.1)
+  xml-simple (= 1.1.1)

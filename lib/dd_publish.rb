@@ -3,6 +3,12 @@ require 'gdata'
 require 'xmlsimple'
 
 class GoogleSitesPublisher
+
+  RequiredInformation = [
+    :username,
+    :password,
+    :site,
+  ]
   
   def initialize(username, password, site)
     @username, @password, @site = username, password, site
@@ -40,7 +46,8 @@ class GoogleSitesPublisher
       </entry>
     |
     
-    puts "post new page:\n" + payload + "\n"
+    puts "posting new page: " + title
+    #puts "PAYLOAD:\n" + payload
     
     @gapi.post("#{@base_url}/feeds/content/#{@domain}/#{@site}", payload)
   end
@@ -55,12 +62,18 @@ require 'yaml'
 module DD_Publisher
   
   config = YAML.load_file('google_sites.yml')
+
   
   PUBLISHER = GoogleSitesPublisher.new(config['username'], config['password'], config['site'])
   
   def publish(directory='output')    
-    html = File.read(File.join(directory,'goog_site.html'))    
-    PUBLISHER.add_page('Fri Feb 17 2012 SnP 500', html)    
+    html = File.read(File.join(directory,'goog_site.html'))
+
+    #should use static data from historical output for page title
+    #will look like: 'Fri Feb 17 2012 SnP 500'
+    page_title = Date.today.strftime("%a %b %d, %Y SnP 500")
+
+    PUBLISHER.add_page(page_title, html)
   end
   
 end
