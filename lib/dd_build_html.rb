@@ -38,7 +38,7 @@ module DD_HTML_Builder
     end
 
     @page_title = Time.now.strftime("%a %b %d, %Y SnP 500 %H:%M:%S")
-    @page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
+    @page_title_url = @page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
 
     #execute template!
     template_str = IO.read(template_filename)

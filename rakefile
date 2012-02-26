@@ -62,20 +62,17 @@ module DD_JOBS
     end
   end
 
-  ##GRAPHICS
-  require 'dd_graph_generator'
-  include DD_GRAPH_GENERATOR
-
-  def make_graphics
-    FileUtils.mkdir_p GRAPH_OUTPUT_DIR unless Dir.exist? GRAPH_OUTPUT_DIR
-
-    input_data_file = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
-    output_image_file = File.join(GRAPH_OUTPUT_DIR, 'gspc_200_day_dma_band.png')
-    generate_dma_band_chart input_data_file, output_image_file, :dma_period => 200, :chart_days => 1000
-
-
-
-  end
+  ###GRAPHICS
+  #require 'dd_graph_generator'
+  #include DD_GRAPH_GENERATOR
+  #
+  #def make_graphics
+  #  FileUtils.mkdir_p GRAPH_OUTPUT_DIR unless Dir.exist? GRAPH_OUTPUT_DIR
+  #
+  #  input_data_file = File.join(TECHNICAL_DATA_DIR, '^GSPC_analysis.csv' )
+  #  output_image_file = File.join(GRAPH_OUTPUT_DIR, 'gspc_200_day_dma_band.png')
+  #  generate_dma_band_chart input_data_file, output_image_file, :dma_period => 200, :chart_days => 1000
+  #end
 
 
   ## HTML FILES
@@ -113,17 +110,13 @@ task :update_technical_data do
 end
 #task :update_technical_data => [:update_historical_data]
 
-task :make_graphics do
-  make_graphics
-end
-#task :make_graphics => [ :update_technical_data]
 
 task :build_blog_html do
   update_html_files
 end
 #task :build_blog_html => [:update_technical_data, :make_graphics]
 
-task :build_blog => [:setup_seed_data, :update_historical_data, :update_technical_data, :make_graphics, :build_blog_html]
+task :build_blog => [:setup_seed_data, :update_historical_data, :update_technical_data, :build_blog_html]
 task :default => [:build_blog]
 
 
