@@ -25,7 +25,7 @@ module DD_HTML_Builder
          generate_dma_band_chart File.join(TECHNICAL_DATA_DIR, "^#{name.upcase}_analysis.csv" ), File.join('output', filename), :dma_period => 200, :chart_days => 1000
     end
 
-    "<img width='800' height='400' src='#{filename}'></img>"
+    "<img width='800' height='400' src='/site/sp500dailydeets/#{@page_title_url}/#{filename}'></img>"
   end
 
   def generate_daily_dose_html input_file, template_filename, output_dir
@@ -38,7 +38,7 @@ module DD_HTML_Builder
     end
 
     @page_title = Time.now.strftime("%a %b %d, %Y SnP 500 %H:%M:%S")
-    @page_title_url = @page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
+    @page_title_url = @page_title.downcase.gsub(/,/,'').gsub(/[\s:]+/,'-')
 
     #execute template!
     template_str = IO.read(template_filename)
