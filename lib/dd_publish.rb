@@ -15,6 +15,9 @@ class GoogleSitesPublisher
     
     @base_url = 'https://sites.google.com'
     @domain = 'site'
+
+    #most requests are done to this url
+    @site_url = "#{@base_url}/feeds/content/#{@domain}/#{@site}"
     
     @gapi = GData::Client::Apps.new(:version => 1.4)  #google sites api requires version 1.4 for some reason
     @gapi.source = 'indexdailydeets-0.1'
@@ -23,18 +26,19 @@ class GoogleSitesPublisher
   end
   
   def site_content
-    body = @gapi.get("#{@base_url}/feeds/content/#{@domain}/#{@site}").body
+    body = @gapi.get(@site_url).body
     xml = XmlSimple.xml_in(body)
     
     pretty_xml = XmlSimple.xml_out(xml)
-    
-    puts
-    puts pretty_xml
-    puts
-    
+
+    Log.debug "Site content:\n\n#{pretty_xml}\n"
+
+    pretty_xml
   end
   
   def add_page(title, content)       
+    Log.info "posting new page: " + title
+
     payload = %Q|
     <entry xmlns="http://www.w3.org/2005/Atom">
         <category scheme="http://schemas.google.com/g/2005#kind"
@@ -46,30 +50,34 @@ class GoogleSitesPublisher
       </entry>
     |
     
-    puts "posting new page: " + title
-    #puts "PAYLOAD:\n" + payload
+    Log.debug "PAYLOAD:\n#{payload}\n"
     
-    @gapi.post("#{@base_url}/feeds/content/#{@domain}/#{@site}", payload)
+    response = @gapi.post(@site_url, payload)
+
+    body = XmlSimple.xml_in(response.body)
+
+    #Log.debug "Response body:\n\n#{response.body}\n\n#{body.inspect}"
+
+    #send back the id of the new page so we can attach files to it
+    id = body["id"][0].match(/\/(\d+)$/)[1]
+    Log.info "New page's id is: '#{id}'"
+    id
   end
   
-  def attach_file(title, filepath, parent_page)
+  def attach_file(title, filepath, parent_page_id)
+    Log.info "Attaching file '#{filepath}' to page '#{parent_page_id}'"
+
     payload = %Q|
     <entry xmlns="http://www.w3.org/2005/Atom">
       <category scheme="http://schemas.google.com/g/2005#kind"
               term="http://schemas.google.com/sites/2008#attachment" label="attachment"/>
       <link rel="http://schemas.google.com/sites/2008#parent" type="application/atom+xml"
-            href="https://sites.google.com/feeds/content/#{@domain}/#{@site}/#{parent_page}"/>
+            href="#{@site_url}/#{parent_page_id}"/>
       <title>#{title}</title>
     </entry>
     |
 
-    path = "#{@base_url}/feeds/content/#{@domain}/#{@site}"
-    #https://sites.google.com/site/sp500dailydeets/fri-feb-24-2012-snp-500/gspc_200_day_dma_band.png?attredirects=0
-
-    puts "PAYLOAD:\n#{payload}\n"
-    puts "PATH: '#{path}'\n"
-
-    @gapi.make_file_request(:post, path, filepath, 'image/png', payload)
+    @gapi.make_file_request(:post, @site_url, filepath, 'image/png', payload)
   end
   
 end
@@ -87,12 +95,12 @@ module DD_Publisher
 
     #should use static data from historical output for page title
     #will look like: 'Fri Feb 17 2012 SnP 500'
-    page_title = Date.today.strftime("%a %b %d, %Y SnP 500")
+    page_title = Time.now.strftime("%a %b %d, %Y SnP 500 %H:%M:%S")
 
     page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
 
-    #PUBLISHER.add_page(page_title, html)
-    PUBLISHER.attach_file('chart.png', File.join(directory, 'imgs/gspc_200_day_dma_band.png'), page_title_url)
+    new_page_id = PUBLISHER.add_page(page_title, html)
+    PUBLISHER.attach_file('gspc_200_day_dma_band.png', File.join(directory, 'imgs/gspc_200_day_dma_band.png'), new_page_id)
   end
   
 end
