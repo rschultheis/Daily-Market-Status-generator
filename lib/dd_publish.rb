@@ -2,6 +2,8 @@ require 'dd_logger'
 require 'gdata'
 require 'xmlsimple'
 
+
+
 class GoogleSitesPublisher
 
   RequiredInformation = [
@@ -87,7 +89,6 @@ module DD_Publisher
   
   config = YAML.load_file('google_sites.yml')
 
-  
   PUBLISHER = GoogleSitesPublisher.new(config['username'], config['password'], config['site'])
   
   def publish(directory='output')    
@@ -100,7 +101,11 @@ module DD_Publisher
     page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
 
     new_page_id = PUBLISHER.add_page(page_title, html)
-    PUBLISHER.attach_file('gspc_200_day_dma_band.png', File.join(directory, 'imgs/gspc_200_day_dma_band.png'), new_page_id)
+    images = Dir["#{directory}/**/*.png"].map {|f| f.match(/^#{directory}\/(.*)$/)[1]}
+    Log.debug "Publishing image files: #{images.inspect}"
+    images.each do |image_file|
+      PUBLISHER.attach_file(image_file, File.join(directory, image_file), new_page_id)
+    end
   end
   
 end
