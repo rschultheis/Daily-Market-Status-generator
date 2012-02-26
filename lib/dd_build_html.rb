@@ -37,7 +37,7 @@ module DD_HTML_Builder
       Log.debug "current_day_numbers key: '#{k}'\t-> '#{v}'"
     end
 
-    @page_title = Time.now.strftime("%a %b %d, %Y SnP 500 %H:%M:%S")
+    @page_title = @current_day_numbers[:date].strftime("%a %b %d, %Y SnP 500")
     @page_title_url = @page_title.downcase.gsub(/,/,'').gsub(/[\s:]+/,'-')
 
     #execute template!
