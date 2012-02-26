@@ -6,12 +6,6 @@ require 'xmlsimple'
 
 class GoogleSitesPublisher
 
-  RequiredInformation = [
-    :username,
-    :password,
-    :site,
-  ]
-  
   def initialize(username, password, site)
     @username, @password, @site = username, password, site
     
@@ -21,13 +15,22 @@ class GoogleSitesPublisher
     #most requests are done to this url
     @site_url = "#{@base_url}/feeds/content/#{@domain}/#{@site}"
     
-    @gapi = GData::Client::Apps.new(:version => 1.4)  #google sites api requires version 1.4 for some reason
-    @gapi.source = 'indexdailydeets-0.1'
-    @gapi.clientlogin(@username, @password, nil, nil, 'jotspot')  #http://code.google.com/intl/en/apis/sites/faq.html#AuthServiceName
-             
+    @gapi = nil  #login happens when first request is made, so this is nil for now
+  end
+
+  #login only once
+  def login
+    #google sites api requires version 1.4 for some reason
+    unless @gapi
+      Log.info "Logging into google sites with username '#{@username}'"
+      @gapi = GData::Client::Apps.new(:version => 1.4)
+      @gapi.source = 'indexdailydeets-0.1'
+      @gapi.clientlogin(@username, @password, nil, nil, 'jotspot')  #http://code.google.com/intl/en/apis/sites/faq.html#AuthServiceName
+    end
   end
   
   def site_content
+    login
     body = @gapi.get(@site_url).body
     xml = XmlSimple.xml_in(body)
     
@@ -39,6 +42,7 @@ class GoogleSitesPublisher
   end
   
   def add_page(title, content)       
+    login
     Log.info "posting new page: " + title
 
     payload = %Q|
@@ -67,6 +71,7 @@ class GoogleSitesPublisher
   end
   
   def attach_file(title, filepath, parent_page_id)
+    login
     Log.info "Attaching file '#{filepath}' to page '#{parent_page_id}'"
 
     payload = %Q|
@@ -94,13 +99,16 @@ module DD_Publisher
   def publish(directory='output')    
     html = File.read(File.join(directory,'goog_site.html'))
 
-    #should use static data from historical output for page title
-    #will look like: 'Fri Feb 17 2012 SnP 500'
-    page_title = Time.now.strftime("%a %b %d, %Y SnP 500 %H:%M:%S")
+    page_title_file = File.open (File.join(directory, 'goog_site.title'))
+    page_title = page_title_file.readline
+    page_title_file.close
+    Log.debug "Read page title: '#{page_title}'"
 
-    page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
+    #page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
 
     new_page_id = PUBLISHER.add_page(page_title, html)
+
+    #images need to be uploaded..
     images = Dir["#{directory}/**/*.png"].map {|f| f.match(/^#{directory}\/(.*)$/)[1]}
     Log.debug "Publishing image files: #{images.inspect}"
     images.each do |image_file|

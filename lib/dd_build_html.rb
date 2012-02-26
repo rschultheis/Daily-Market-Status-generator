@@ -37,6 +37,9 @@ module DD_HTML_Builder
       Log.debug "current_day_numbers key: '#{k}'\t-> '#{v}'"
     end
 
+    @page_title = Time.now.strftime("%a %b %d, %Y SnP 500 %H:%M:%S")
+    @page_title_url = page_title.downcase.gsub(/,/,'').gsub(/\s+/,'-')
+
     #execute template!
     template_str = IO.read(template_filename)
 
@@ -48,9 +51,15 @@ module DD_HTML_Builder
     Log.debug "post-executed template\n\n#{blog_html}\n"
 
     output_filename = File.join(output_dir, File.basename(template_filename).sub(/\.erb$/i, ''))
-    Log.debug "writing html to '#{output_filename}'"
+    Log.info "writing html to '#{output_filename}'"
     File.open(output_filename, 'w') {|f| f.write(blog_html) }
 
+    #title is used in a couple places
+    title_filename = File.join(output_dir, File.basename(template_filename).sub(/\.html\.erb$/i, '') + '.title')
+    Log.info "Writing page title '#{@page_title}' to file '#{title_filename}'"
+    title_file = File.open(title_filename, 'w')
+    title_file.write(@page_title)
+    title_file.close
   end
 end
 
