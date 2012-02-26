@@ -96,10 +96,13 @@ module DD_Publisher
 
   PUBLISHER = GoogleSitesPublisher.new(config['username'], config['password'], config['site'])
   
-  def publish(directory='output')    
-    html = File.read(File.join(directory,'goog_site.html'))
+  def publish(directory='output')
+    html_filename = Dir["#{directory}/*.html"][0]
 
-    page_title_file = File.open (File.join(directory, 'goog_site.title'))
+    html = File.read(html_filename)
+
+    title_filename = Dir["#{directory}/*.title"][0]
+    page_title_file = File.open (title_filename)
     page_title = page_title_file.readline
     page_title_file.close
     Log.debug "Read page title: '#{page_title}'"
