@@ -96,6 +96,7 @@ module DD_GRAPH_GENERATOR
     set_date_labels chart, chart_data
     Log.debug "writing chart to '#{output_filename}'"
     chart.write(output_filename)
+    output_filename
   end
 
   def generate_volume_chart input_filename, output_filename, opts={}

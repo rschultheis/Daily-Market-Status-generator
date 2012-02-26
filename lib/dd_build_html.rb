@@ -1,12 +1,32 @@
 require 'dd_logger'
 require 'dd_csv_io'
+require 'dd_graph_generator'
 
 require 'erb'
+
+BASE_DIR = Dir.pwd
+#csv files
+RAW_DATA_DIR = File.join(BASE_DIR ,'data')
+TECHNICAL_DATA_DIR = File.join(RAW_DATA_DIR, 'technical')
 
 module DD_HTML_Builder
 
   include CSV_IO
   ROWS_OF_HISTORY_TO_ANALYZE = 1
+
+  include DD_GRAPH_GENERATOR
+
+  def chart name, type
+    filename = "#{name}_#{type}.png"
+    Log.info "Generating chart: '#{filename}'"
+
+    case type
+      when '200_dma_band_chart'
+         generate_dma_band_chart File.join(TECHNICAL_DATA_DIR, "^#{name.upcase}_analysis.csv" ), File.join('output', filename), :dma_period => 200, :chart_days => 1000
+    end
+
+    "<img width='800' height='400' src='#{filename}'></img>"
+  end
 
   def generate_daily_dose_html input_file, template_filename, output_dir
     data = csv_read(input_file, :rows => ROWS_OF_HISTORY_TO_ANALYZE)
@@ -25,9 +45,7 @@ module DD_HTML_Builder
     template = ERB.new(template_str)
     blog_html = template.result(binding)
 
-    #Log.debug "post-executed template\n#{blog_html}"
-
-
+    Log.debug "post-executed template\n\n#{blog_html}\n"
 
     output_filename = File.join(output_dir, File.basename(template_filename).sub(/\.erb$/i, ''))
     Log.debug "writing html to '#{output_filename}'"
